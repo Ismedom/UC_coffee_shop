@@ -6,7 +6,7 @@ from app.config import settings
 
 class AuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        if request.url.path in ["/", "/api/v1/auth/login", "/api/v1/auth/register", "/docs", "/openapi.json"]:
+        if request.url.path in ["/", "/api/v1/auth/login", "/api/v1/auth/register", "/docs", "/redoc", "/openapi.json"]:
             return await call_next(request)
 
         auth_header = request.headers.get("Authorization")
