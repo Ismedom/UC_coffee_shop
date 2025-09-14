@@ -1,0 +1,18 @@
+{% extends "base_panel.html" %} {% block title %}Payments Management{% endblock
+%} {% block content %}
+<h1 class="text-3xl font-bold mb-4">Payments</h1>
+<div class="grid grid-cols-3 gap-6">
+  <div class="bg-white p-6 shadow rounded-lg">
+    <h2 class="text-lg font-semibold">Pending Payments</h2>
+    <p class="text-gray-600">Payments that are pending</p>
+  </div>
+  <div class="bg-white p-6 shadow rounded-lg">
+    <h2 class="text-lg font-semibold">Completed Payments</h2>
+    <p class="text-gray-600">Payments that are completed</p>
+  </div>
+  <div class="bg-white p-6 shadow rounded-lg">
+    <h2 class="text-lg font-semibold">Payment History</h2>
+    <p class="text-gray-600">View all payment records</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base_panel.html" %} {% block title %}Dashboard{% endblock %} {%
+block content %}
+<h1 class="text-3xl font-bold mb-4">Welcome, {{ username }}</h1>
+<div class="grid grid-cols-4 gap-6">
+  <div class="bg-white p-6 shadow rounded-lg">
+    <h2 class="text-lg font-semibold">Coffees</h2>
+    <p class="text-gray-600">Manage coffee items</p>
+  </div>
+  <div class="bg-white p-6 shadow rounded-lg">
+    <h2 class="text-lg font-semibold">Users</h2>
+    <p class="text-gray-600">Manage user accounts</p>
+  </div>
+  <div class="bg-white p-6 shadow rounded-lg">
+    <h2 class="text-lg font-semibold">Roles</h2>
+    <p class="text-gray-600">Manage roles & permissions</p>
+  </div>
+  <div class="bg-white p-6 shadow rounded-lg">
+    <h2 class="text-lg font-semibold">Orders</h2>
+    <p class="text-gray-600">Track and manage orders</p>
+  </div>
+</div>
+{% endblock %}

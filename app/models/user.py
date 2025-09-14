@@ -28,6 +28,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     roles = relationship("Role", secondary=user_roles, back_populates="users", lazy="selectin")
+    orders = relationship("PurchaseOrder", back_populates="user", lazy="selectin", cascade="all, delete-orphan")
 
     @property
     def password(self):
@@ -64,8 +65,8 @@ class Permission(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
     description = Column(String)
-    resource = Column(String)  # e.g., 'users', 'posts'
-    action = Column(String)    # e.g., 'read', 'write', 'delete'
+    resource = Column(String)
+    action = Column(String)
     
     roles = relationship("Role", secondary=role_permissions, back_populates="permissions", lazy="selectin")
 

@@ -57,6 +57,19 @@ class AuthService:
             "access_token": access_token,
             "user": db_user.to_dict()
         }
+
+    async def login_user_from_web(email: str, password: str, db: AsyncSession):
+        """Authenticate user for website login"""
+        stmt = select(User).where(User.email == email)
+        result = await db.execute(stmt)
+        user = result.scalars().first()
+
+        if not user:
+            return None
+        if not verify_password(password, user.password):
+            return None
+        return user
+
     async def log_out():
         """ logout """
         return

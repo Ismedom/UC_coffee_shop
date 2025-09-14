@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            animation: {
+              "slide-in": "slideIn 0.3s ease-out",
+              "fade-in": "fadeIn 0.2s ease-in",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="bg-gray-50 font-sans">
+    <div class="flex h-screen">
+      <div
+        id="mobile-backdrop"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden hidden"
+      ></div>
+
+      <aside
+        id="sidebar"
+        class="fixed lg:static inset-y-0 left-0 w-64 bg-gradient-to-b from-blue-800 to-blue-900 text-white flex flex-col transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-50"
+      >
+        <div class="p-6 border-b border-blue-700">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="bg-white p-2 rounded-lg">
+                <i class="fas fa-coffee text-blue-800 text-xl"></i>
+              </div>
+              <div>
+                <h1 class="text-xl font-bold">Coffee Shop</h1>
+                <p class="text-blue-200 text-sm">Admin Panel</p>
+              </div>
+            </div>
+            <button
+              id="close-sidebar"
+              class="lg:hidden text-white hover:text-blue-200"
+            >
+              <i class="fas fa-times text-xl"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="p-4 border-b border-blue-700">
+          <div class="flex items-center space-x-3">
+            <div
+              class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center"
+            >
+              <i class="fas fa-user text-white"></i>
+            </div>
+            <div>
+              <p class="font-medium">Admin User</p>
+              <p class="text-blue-200 text-sm">Administrator</p>
+            </div>
+          </div>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2">
+          <a
+            href="/dashboard"
+            class="nav-item flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 group"
+          >
+            <i
+              class="fas fa-tachometer-alt text-blue-200 group-hover:text-white"
+            ></i>
+            <span>Dashboard</span>
+          </a>
+
+          <a
+            href="/products"
+            class="nav-item flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 group"
+          >
+            <i class="fas fa-coffee text-blue-200 group-hover:text-white"></i>
+            <span>Coffee Management</span>
+          </a>
+
+          <a
+            href="/users"
+            class="nav-item flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 group"
+          >
+            <i class="fas fa-users text-blue-200 group-hover:text-white"></i>
+            <span>Users</span>
+          </a>
+
+          <a
+            href="/roles"
+            class="nav-item flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 group"
+          >
+            <i
+              class="fas fa-user-shield text-blue-200 group-hover:text-white"
+            ></i>
+            <span>Roles & Permissions</span>
+          </a>
+
+          <a
+            href="/orders"
+            class="nav-item flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 group"
+          >
+            <i
+              class="fas fa-shopping-cart text-blue-200 group-hover:text-white"
+            ></i>
+            <span>Orders</span>
+            <span
+              class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full"
+              >3</span
+            >
+          </a>
+
+          <a
+            href="/payments"
+            class="nav-item flex items-center space-x-3 py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 group"
+          >
+            <i
+              class="fas fa-credit-card text-blue-200 group-hover:text-white"
+            ></i>
+            <span>Payments</span>
+          </a>
+
+          <div class="relative">
+            <button
+              onclick="toggleDropdown()"
+              class="nav-item analytics-parent w-full flex items-center justify-between space-x-3 py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200 group"
+              data-path="/analytics"
+            >
+              <div class="flex items-center space-x-3">
+                <i
+                  class="fas fa-chart-bar text-blue-200 group-hover:text-white"
+                ></i>
+                <span>Analytics</span>
+              </div>
+              <i
+                id="dropdown-arrow"
+                class="fas fa-chevron-right text-blue-200 group-hover:text-white transition-transform duration-200"
+              ></i>
+            </button>
+            <div id="analytics-dropdown" class="hidden ml-8 mt-2 space-y-2">
+              <a
+                href="/analytics/sales"
+                class="nav-sub-item block py-2 px-4 text-sm text-blue-200 hover:text-white hover:bg-blue-700 rounded"
+                >Sales Reports</a
+              >
+              <a
+                href="/analytics/customers"
+                class="nav-sub-item block py-2 px-4 text-sm text-blue-200 hover:text-white hover:bg-blue-700 rounded"
+                >Customer Insights</a
+              >
+            </div>
+          </div>
+        </nav>
+
+        <div class="p-4 border-t border-blue-700">
+          <a
+            href="/logout"
+            class="flex items-center space-x-3 py-3 px-4 bg-red-600 rounded-lg hover:bg-red-700 transition-colors duration-200 text-center justify-center group"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+      </aside>
+
+      <div class="flex-1 flex flex-col lg:ml-0">
+        <header class="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <button
+                id="mobile-menu"
+                class="lg:hidden text-gray-600 hover:text-gray-900"
+              >
+                <i class="fas fa-bars text-xl"></i>
+              </button>
+              <div>
+                <h2 class="text-2xl font-semibold text-gray-800">
+                  {% block page_title %}Dashboard{% endblock %}
+                </h2>
+                <p class="text-gray-600 text-sm">
+                  {% block page_description %}Welcome to your admin panel{%
+                  endblock %}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-4">
+              <div class="hidden md:block relative">
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <i
+                  class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                ></i>
+              </div>
+
+              <div class="relative">
+                <button
+                  class="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                >
+                  <i class="fas fa-bell text-xl"></i>
+                  <span
+                    class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
+                    >3</span
+                  >
+                </button>
+              </div>
+
+              <div class="relative">
+                <button
+                  class="flex items-center space-x-2 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+                >
+                  <div
+                    class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center"
+                  >
+                    <i class="fas fa-user text-white text-sm"></i>
+                  </div>
+                  <span class="hidden md:block font-medium">Admin</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 p-6 overflow-y-auto">
+          {% block content %}
+          <div class="max-w-7xl mx-auto">
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+            >
+              <div
+                class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm">Total Orders</p>
+                    <p class="text-2xl font-bold text-gray-800">1,234</p>
+                  </div>
+                  <div class="bg-blue-100 p-3 rounded-full">
+                    <i class="fas fa-shopping-cart text-blue-600"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm">Revenue</p>
+                    <p class="text-2xl font-bold text-gray-800">$12,345</p>
+                  </div>
+                  <div class="bg-green-100 p-3 rounded-full">
+                    <i class="fas fa-dollar-sign text-green-600"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm">Active Users</p>
+                    <p class="text-2xl font-bold text-gray-800">567</p>
+                  </div>
+                  <div class="bg-purple-100 p-3 rounded-full">
+                    <i class="fas fa-users text-purple-600"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-gray-600 text-sm">Products</p>
+                    <p class="text-2xl font-bold text-gray-800">89</p>
+                  </div>
+                  <div class="bg-orange-100 p-3 rounded-full">
+                    <i class="fas fa-coffee text-orange-600"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-white p-6 rounded-lg shadow-sm border border-gray-200"
+            >
+              <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                Test Navigation Active States
+              </h3>
+              <p class="text-gray-600 mb-4">
+                Click these buttons to simulate different URL paths and see how
+                the navigation highlights:
+              </p>
+              <div class="space-x-2">
+                <button
+                  onclick="simulateNavigation('/dashboard')"
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Dashboard
+                </button>
+                <button
+                  onclick="simulateNavigation('/products')"
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Products
+                </button>
+                <button
+                  onclick="simulateNavigation('/products/add')"
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Products/Add
+                </button>
+                <button
+                  onclick="simulateNavigation('/users/profile')"
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Users/Profile
+                </button>
+                <button
+                  onclick="simulateNavigation('/analytics/sales')"
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Analytics/Sales
+                </button>
+                <button
+                  onclick="simulateNavigation('/orders/pending')"
+                  class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Orders/Pending
+                </button>
+              </div>
+              <p class="text-sm text-gray-500 mt-2">
+                Current simulated path:
+                <span
+                  id="current-path"
+                  class="font-mono bg-gray-100 px-2 py-1 rounded"
+                  >/dashboard</span
+                >
+              </p>
+            </div>
+          </div>
+          {% endblock %}
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const mobileMenu = document.getElementById("mobile-menu");
+      const sidebar = document.getElementById("sidebar");
+      const backdrop = document.getElementById("mobile-backdrop");
+      const closeSidebar = document.getElementById("close-sidebar");
+
+      function toggleSidebar() {
+        sidebar.classList.toggle("-translate-x-full");
+        backdrop.classList.toggle("hidden");
+      }
+
+      mobileMenu.addEventListener("click", toggleSidebar);
+      closeSidebar.addEventListener("click", toggleSidebar);
+      backdrop.addEventListener("click", toggleSidebar);
+
+      function toggleDropdown() {
+        const dropdown = document.getElementById("analytics-dropdown");
+        const arrow = document.getElementById("dropdown-arrow");
+        dropdown.classList.toggle("hidden");
+        arrow.classList.toggle("rotate-90");
+      }
+
+      function updateActiveNavigation(currentPath = null) {
+        const path = currentPath || window.location.pathname;
+        const navItems = document.querySelectorAll(".nav-item");
+        const navSubItems = document.querySelectorAll(".nav-sub-item");
+        const analyticsParent = document.querySelector(".analytics-parent");
+        const analyticsDropdown = document.getElementById("analytics-dropdown");
+
+        navItems.forEach((item) => {
+          item.classList.remove("bg-blue-700", "text-white");
+          item.classList.add("text-blue-200");
+          const icon = item.querySelector("i");
+          if (icon) {
+            icon.classList.remove("text-white");
+            icon.classList.add("text-blue-200");
+          }
+        });
+
+        navSubItems.forEach((item) => {
+          item.classList.remove("bg-blue-700", "text-white");
+          item.classList.add("text-blue-200");
+        });
+
+        navItems.forEach((item) => {
+          const href = item.getAttribute("href");
+          const dataPath = item.getAttribute("data-path");
+          const checkPath = dataPath || href;
+
+          if (checkPath && path.startsWith(checkPath)) {
+            if (checkPath === "/" && path !== "/") {
+              return;
+            }
+
+            item.classList.add("bg-blue-700", "text-white");
+            item.classList.remove("text-blue-200");
+
+            const icon = item.querySelector("i");
+            if (icon) {
+              icon.classList.add("text-white");
+              icon.classList.remove("text-blue-200");
+            }
+
+            if (item === analyticsParent) {
+              analyticsDropdown.classList.remove("hidden");
+              document
+                .getElementById("dropdown-arrow")
+                .classList.add("rotate-90");
+            }
+          }
+        });
+
+        navSubItems.forEach((item) => {
+          const href = item.getAttribute("href");
+          if (href && path.startsWith(href)) {
+            item.classList.add("bg-blue-700", "text-white");
+            item.classList.remove("text-blue-200");
+
+            analyticsParent.classList.add("bg-blue-700", "text-white");
+            analyticsParent.classList.remove("text-blue-200");
+
+            const parentIcon = analyticsParent.querySelector("i");
+            if (parentIcon) {
+              parentIcon.classList.add("text-white");
+              parentIcon.classList.remove("text-blue-200");
+            }
+
+            analyticsDropdown.classList.remove("hidden");
+            document
+              .getElementById("dropdown-arrow")
+              .classList.add("rotate-90");
+          }
+        });
+
+        const currentPathElement = document.getElementById("current-path");
+        if (currentPathElement) {
+          currentPathElement.textContent = path;
+        }
+      }
+
+      function simulateNavigation(path) {
+        updateActiveNavigation(path);
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        updateActiveNavigation();
+      });
+
+      window.addEventListener("resize", function () {
+        if (window.innerWidth >= 1024) {
+          sidebar.classList.remove("-translate-x-full");
+          backdrop.classList.add("hidden");
+        }
+      });
+
+      window.addEventListener("popstate", function () {
+        updateActiveNavigation();
+      });
+    </script>
+  </body>
+</html>

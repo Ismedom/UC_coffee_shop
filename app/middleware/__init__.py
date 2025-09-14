@@ -1,3 +1,3 @@
-from .auth_middleware import AuthMiddleware
+from .auth_middleware import APIAuthMiddleware, WebAuthMiddleware
 
-__all__=['AuthMiddleware']
+__all__=['APIAuthMiddleware', 'WebAuthMiddleware']

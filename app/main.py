@@ -1,10 +1,8 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from app.database import create_tables
-from app.routers.auth import router as auth_router
-from app.routers.users import router as users_router
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
-from app.middleware import AuthMiddleware
+from app.routers import api_router  
+from app.middleware import APIAuthMiddleware, WebAuthMiddleware
+from starlette.middleware.sessions import SessionMiddleware
 import os
 
 app = FastAPI(
@@ -13,20 +11,11 @@ app = FastAPI(
     version="1.0.0"
 )
 
-app.add_middleware(AuthMiddleware)
+app.add_middleware(APIAuthMiddleware)
+app.add_middleware(WebAuthMiddleware)
+app.add_middleware(SessionMiddleware, secret_key="hhoLbKYE2tkZcjlxy0DBJO0uxArpJscAnS4UmdGDydk")
 
-app.include_router(auth_router, prefix="/api/v1")
-app.include_router(users_router, prefix="/api/v1")
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
-
-@app.get("/", response_class=HTMLResponse)
-async def root(request: Request):
-    return templates.TemplateResponse(
-        "welcome.html",
-        {"request": request, "status": "healthy", "version": "1.0.0"}
-    )
+app.include_router(api_router) 
 
 @app.on_event("startup")
 async def startup():
