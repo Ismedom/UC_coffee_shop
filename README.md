@@ -84,11 +84,3 @@ python -m app.database.seed
 ```bash
 python -m app.database.role_permission
 ```
-
-### Assign Roles to Permissions
-
-```bash
-python -m app.database.assign
-```
-
----
