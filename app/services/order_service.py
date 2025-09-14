@@ -1,13 +1,13 @@
 from sqlalchemy.orm import Session
-from app.models.order import PurchaseOrder, PurchaseOrderDetail
-from app.schemas import PurchaseOrderCreate, PurchaseOrderRead, PurchaseOrderDetailRead
-
+from app.models import PurchaseOrder, PurchaseOrderDetail, User
+from app.schemas import PurchaseOrderCreate, PurchaseOrderRead, PurchaseOrderDetailRead, CurrentUser
+from app.helper.auth import get_current_user
 
 class OrderService:
 
     @staticmethod
-    async def create_order(db: Session, order_data: PurchaseOrderCreate) -> PurchaseOrderRead:
-        order = PurchaseOrder(user_id=order_data.user_id)
+    async def create_order(db: Session, order_data: PurchaseOrderCreate, current_user: CurrentUser) -> PurchaseOrderRead:
+        order = PurchaseOrder(user_id=current_user.user_id)
         db.add(order)
         db.flush()
 
@@ -48,8 +48,6 @@ class OrderService:
                 ) for d in details_list
             ]
         )
-
-
 
     @staticmethod
     def list_orders(db: Session):

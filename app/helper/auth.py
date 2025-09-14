@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from datetime import datetime, timedelta
-from app.schemas.user import UserCreate
+from app.schemas import CurrentUser
 import jwt
 from typing import Optional
 from app.config import settings
@@ -29,7 +29,7 @@ def create_access_token(user_id: int, username: str, expires_delta: Optional[tim
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> UserCreate:
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> CurrentUser:
     """Decode JWT token and return user data"""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -45,7 +45,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
         if user_id is None or username is None:
             raise credentials_exception
             
-        return UserCreate(user_id=int(user_id), username=username)
+        return CurrentUser(user_id=int(user_id), username=username)
         
     except jwt.PyJWTError:
         raise credentials_exception

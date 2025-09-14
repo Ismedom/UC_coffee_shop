@@ -1,11 +1,21 @@
-permissions_data = [
-    {"name": "user.read", "resource": "users", "action": "read"},
-    {"name": "user.edit", "resource": "users", "action": "edit"},
-    {"name": "user.update", "resource": "posts", "action": "update"},
-    {"name": "user.delete", "resource": "posts", "action": "delete"},
+ACTIONS = ["create", "read", "update", "delete"]
+
+RESOURCES = [
+    "users",
+    "roles",
+    "permissions",
+    "products",
+    "purchase_orders",
+    "purchase_order_details",
 ]
 
-role_permissions_map = {
-    "admin": ["user.read", "user.edit", "user.update", "user.delete"],
-    "user": ["user.read"]
-}
+PERMISSIONS = [
+    {"name": f"{resource}.{action}", "resource": resource, "action": action}
+    for resource in RESOURCES
+    for action in ACTIONS
+]
+
+# ROLE_PERMISSIONS_MAP = {
+#     "admin": [perm["name"] for perm in PERMISSIONS],
+#     "user": [perm["name"] for perm in PERMISSIONS if perm["action"] == "read"],
+# }

@@ -1,4 +1,4 @@
-from .user import UserBase, UserCreate, UserOut, TokenUserResponse, LoginUser
+from .user import UserBase, UserCreate, UserOut, TokenUserResponse, LoginUser, CurrentUser
 from .order import PurchaseOrderDetailCreate, PurchaseOrderDetailRead, PurchaseOrderCreate, PurchaseOrderRead 
 
 __all__ = [
@@ -10,5 +10,6 @@ __all__ = [
     'PurchaseOrderDetailCreate',
     'PurchaseOrderDetailRead', 
     'PurchaseOrderCreate', 
-    'PurchaseOrderRead' 
+    'PurchaseOrderRead',
+    'CurrentUser'
 ]

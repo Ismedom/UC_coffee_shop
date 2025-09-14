@@ -10,7 +10,8 @@ from app.models.user import Role, Permission, User
 from app.models.product import Product
 from sqlalchemy import select
 from fastapi.responses import RedirectResponse
-
+from app.schemas import PurchaseOrderCreate
+from app.models.order import PurchaseOrder
 import os
 
 router = APIRouter()
@@ -100,7 +101,6 @@ async def delete_product(product_id: int, db: AsyncSession = Depends(get_db)):
     await db.commit()
     return RedirectResponse("/products", status_code=303)
 
-
 @router.get("/users", response_class=HTMLResponse)
 async def users_page(request: Request, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User))
@@ -177,8 +177,6 @@ async def create_user(
 
     return RedirectResponse("/users", status_code=303)
 
-# route for roles
-
 @router.get("/roles", response_class=HTMLResponse)
 async def roles_page(request: Request, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(Role))
@@ -238,12 +236,58 @@ async def edit_role(
 
     return RedirectResponse("/roles", status_code=303)
 
-
 @router.get("/orders", response_class=HTMLResponse)
-async def orders_page(request: Request):
-    return templates.TemplateResponse("orders/orders.html", {"request": request})
+async def list_orders_page(request: Request, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(PurchaseOrder))
+    orders = result.scalars().all()
+    return templates.TemplateResponse("orders/list.html", {
+        "request": request,
+        "orders": orders
+    })
+
+@router.get("/orders/create", response_class=HTMLResponse)
+async def create_order_page(request: Request):
+    return templates.TemplateResponse("orders/create.html", {"request": request})
+
+@router.post("/orders/create")
+async def create_order(
+    request: Request,
+    user_id: int = Form(...),
+    product_id: int = Form(...),
+    quantity: int = Form(...),
+    unit_price: float = Form(...),
+    db: AsyncSession = Depends(get_db)
+):
+    order_data = PurchaseOrderCreate(
+        user_id=user_id,
+        details=[{
+            "product_id": product_id,
+            "quantity": quantity,
+            "unit_price": unit_price
+        }]
+    )
+    order = await create_order(db, order_data)
+
+    return RedirectResponse(url="/orders", status_code=303)
+
+@router.get("/orders/{order_id}/complete")
+async def complete_order(order_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(PurchaseOrder).where(PurchaseOrder.id == order_id))
+    order = result.scalars().first()
+    if order:
+        order.status = "Completed"
+        await db.commit()
+    return RedirectResponse(url="/orders", status_code=303)
+
+@router.get("/orders/{order_id}/delete")
+async def delete_order(order_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(PurchaseOrder).where(PurchaseOrder.id == order_id))
+    order = result.scalars().first()
+    if order:
+        await db.delete(order)
+        await db.commit()
+    return RedirectResponse(url="/orders", status_code=303)
 
 @router.get("/payments", response_class=HTMLResponse)
 async def payments_page(request: Request):
     return templates.TemplateResponse("payments/payments.html", {"request": request})
-

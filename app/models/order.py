@@ -1,8 +1,8 @@
 from sqlalchemy.sql import func
 from app.database import Base
-from sqlalchemy import Column, Integer, ForeignKey, DateTime, Numeric
+from sqlalchemy import Column, Integer, ForeignKey, DateTime, Numeric, Text
 from sqlalchemy.orm import relationship
-from app.models.user import User
+from app.constants.status import ORDER_STATUS_DRAFT
 
 
 class PurchaseOrder(Base):
@@ -12,10 +12,10 @@ class PurchaseOrder(Base):
     user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"))
     total_amount = Column(Numeric(10, 2), nullable=False, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    status= Column(Text, default=ORDER_STATUS_DRAFT)
 
     user = relationship("User", back_populates="orders")
     details = relationship("PurchaseOrderDetail", back_populates="order", lazy="selectin", cascade="all, delete-orphan")
-
 
 class PurchaseOrderDetail(Base):
     __tablename__ = "purchase_order_details"

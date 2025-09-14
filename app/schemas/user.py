@@ -30,3 +30,7 @@ class TokenUserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class CurrentUser(BaseModel):
+    user_id: int
+    username: str

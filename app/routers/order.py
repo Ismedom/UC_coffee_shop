@@ -2,15 +2,16 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from app.database import get_db
-from app.schemas.order import PurchaseOrderCreate, PurchaseOrderRead
+from app.models import User
+from app.schemas import PurchaseOrderCreate, PurchaseOrderRead, CurrentUser
 from app.services.order_service import OrderService
+from app.helper.auth import get_current_user
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
 @router.post("/", response_model=PurchaseOrderRead)
-async def create_order(order: PurchaseOrderCreate, db: AsyncSession = Depends(get_db)):
-    return await OrderService.create_order(db, order)
-
+async def create_order(order: PurchaseOrderCreate, db: AsyncSession = Depends(get_db), current_user: CurrentUser = Depends(get_current_user)):
+    return await OrderService.create_order(db, order, current_user)
 
 @router.get("/", response_model=List[PurchaseOrderRead])
 async def list_orders(db: AsyncSession = Depends(get_db)):

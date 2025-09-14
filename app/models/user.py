@@ -27,8 +27,9 @@ class User(Base):
     _password = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
     roles = relationship("Role", secondary=user_roles, back_populates="users", lazy="selectin")
-    orders = relationship("PurchaseOrder", back_populates="user", lazy="selectin", cascade="all, delete-orphan")
+    orders = relationship("PurchaseOrder", back_populates="user")
 
     @property
     def password(self):

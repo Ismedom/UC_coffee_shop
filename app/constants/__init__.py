@@ -1,4 +1,4 @@
-from .permission import permissions_data, role_permissions_map
-from .roles import roles_data
+from .permission import PERMISSIONS
+from .roles import ROLES
 
-__all__ = ["permissions_data", "roles_data", "role_permissions_map"]
+__all__ = ["PERMISSIONS", "ROLES"]

@@ -1,13 +1,13 @@
 import asyncio
 from app.database import AsyncSessionLocal
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models.user import Role, Permission
+from app.models import Role, Permission, Product
 from sqlalchemy import select
 from app.database.connection import create_tables
-from app.constants import permissions_data, roles_data
+from app.constants import PERMISSIONS, ROLES
 
 async def seed_data(session: AsyncSession):
-    for perm_data in permissions_data:
+    for perm_data in PERMISSIONS:
         result = await session.execute(select(Permission).where(Permission.name == perm_data["name"]))
         if not result.scalar_one_or_none():
             perm = Permission(
@@ -17,7 +17,7 @@ async def seed_data(session: AsyncSession):
             )
             session.add(perm)
 
-    for role_data in roles_data:
+    for role_data in ROLES:
         result = await session.execute(select(Role).where(Role.name == role_data["name"]))
         if not result.scalar_one_or_none():
             role = Role(

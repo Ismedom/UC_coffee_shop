@@ -82,36 +82,53 @@ block content %}
           </div>
         </div>
 
-        <div
-          class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-80 overflow-y-auto p-2 border border-gray-200 rounded-lg bg-white"
-        >
-          {% for perm in all_permissions %}
-          <label
-            class="flex items-start p-2 rounded hover:bg-gray-50 transition-colors duration-150"
-          >
-            <input
-              type="checkbox"
-              name="permissions"
-              value="{{ perm.id }}"
-              {%
-              if
-              perm.id
-              in
-              role_permissions
-              %}checked{%
-              endif
-              %}
-              class="mt-1 form-checkbox h-4 w-4 text-indigo-600"
-            />
-            <span class="ml-2 text-gray-700">
-              <span class="block text-sm font-medium">{{ perm.name }}</span>
-              {% if perm.description %}
-              <span class="block text-xs text-gray-500 mt-1"
-                >{{ perm.description }}</span
+        <div class="space-y-4 p-4 border border-gray-200 rounded-lg bg-white">
+          {% set resources = [] %} {% for perm in all_permissions %} {% if
+          perm.resource not in resources %} {% set _ =
+          resources.append(perm.resource) %} {% endif %} {% endfor %} {% for
+          resource in resources | sort %}
+          <div class="border-b border-gray-200 pb-3 last:border-b-0 last:pb-0">
+            <h4 class="font-medium text-gray-800 mb-2 flex items-center">
+              <i class="fas fa-folder mr-2 text-blue-500"></i>
+              {{ resource | replace('_', ' ') | title }}
+            </h4>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 ml-6">
+              {% for perm in all_permissions if perm.resource == resource %}
+              <label
+                class="flex items-start p-2 rounded hover:bg-gray-50 transition-colors duration-150"
               >
-              {% endif %}
-            </span>
-          </label>
+                <input
+                  type="checkbox"
+                  name="permissions"
+                  value="{{ perm.id }}"
+                  {%
+                  if
+                  perm.id
+                  in
+                  role_permissions
+                  %}checked{%
+                  endif
+                  %}
+                  class="mt-1 form-checkbox h-4 w-4 text-indigo-600"
+                />
+                <span class="ml-2 text-gray-700">
+                  <span class="block text-sm font-medium">
+                    {{ perm.action | title }}
+                    <span class="text-xs text-gray-500 font-normal"
+                      >({{ perm.name }})</span
+                    >
+                  </span>
+                  {% if perm.description %}
+                  <span class="block text-xs text-gray-500 mt-1"
+                    >{{ perm.description }}</span
+                  >
+                  {% endif %}
+                </span>
+              </label>
+              {% endfor %}
+            </div>
+          </div>
           {% endfor %}
         </div>
       </div>
@@ -147,6 +164,7 @@ block content %}
       checkboxes.forEach((checkbox) => {
         checkbox.checked = true;
       });
+      updatePermissionCount();
     });
 
     document
@@ -158,6 +176,7 @@ block content %}
         checkboxes.forEach((checkbox) => {
           checkbox.checked = false;
         });
+        updatePermissionCount();
       });
 
     const permissionCheckboxes = document.querySelectorAll(
@@ -176,6 +195,35 @@ block content %}
     permissionCheckboxes.forEach((checkbox) => {
       checkbox.addEventListener("change", updatePermissionCount);
     });
+
+    document.querySelectorAll(".resource-header").forEach((header) => {
+      header.addEventListener("click", function () {
+        const resource = this.dataset.resource;
+        const checkboxes = document.querySelectorAll(
+          `input[name="permissions"][data-resource="${resource}"]`
+        );
+        const allChecked = Array.from(checkboxes).every(
+          (checkbox) => checkbox.checked
+        );
+
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = !allChecked;
+        });
+
+        updatePermissionCount();
+      });
+    });
   });
 </script>
+
+<style>
+  .resource-header {
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .resource-header:hover {
+    background-color: #f9fafb;
+  }
+</style>
 {% endblock %}
