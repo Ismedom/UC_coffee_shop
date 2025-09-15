@@ -12,7 +12,7 @@ router = APIRouter(prefix="/auth", tags=["authentication"])
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
-@router.post("/register", response_model=TokenUserResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/register", status_code=status.HTTP_201_CREATED)
 async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     """Register a new user"""
     try:
